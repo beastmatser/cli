@@ -1,6 +1,8 @@
 package cli
 
 import "core:fmt"
+import "core:os"
+import "core:strings"
 
 
 show_help :: proc(app: Cli) {
@@ -23,14 +25,15 @@ show_help :: proc(app: Cli) {
     }
 }
 
-add :: proc(app: ^Cli, command: Command) {
+add :: proc(app: ^Cli, command: Command) -> Error {
     if command.name == "" {
-        fmt.println("A command must have a name!")
+        return .Invalid_Command_Name
     } else if command.callback == nil {
-        fmt.println("A command must have a callback!")
+        return .Invalid_Command_Callback
     }
 
     app^.commands[command.name] = command
+    return .None
 }
 
 remove :: proc {
@@ -38,18 +41,15 @@ remove :: proc {
     remove_command_by_struct,
 }
 
-remove_command_by_name :: proc(app: ^Cli, command: string) {
-    fmt.println("remove_command_by_name")
+remove_command_by_name :: proc(app: ^Cli, command: string) -> Error {
     commands := &app^.commands
-    fmt.println(commands)
     if command in commands^ {
         delete_key(commands, command)
-        return
+        return .None
     }
-    fmt.printf("'%s' cannot be removed, since this command does not exist.\n")
+    return .Command_Not_Found
 }
 
-remove_command_by_struct :: proc(app: ^Cli, command: Command) {
-    fmt.println("remove_command_by_struct")
-    remove_command_by_name(&(app^), command.name)
+remove_command_by_struct :: proc(app: ^Cli, command: Command) -> Error {
+    return remove_command_by_name(&(app^), command.name)
 }

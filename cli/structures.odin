@@ -22,13 +22,22 @@ Cli :: struct {
 
 // Not implemented
 Nargs :: enum u8 {
-    all,
-    any,
+    All,
+    Any,
 }
 
 
 // Not implemented
 Actions :: enum u8 {
-    store,
-    store_const,
+    Store,
+    Store_Const,
+}
+
+
+Error :: enum {
+    None,
+    Command_Not_Found,
+    Invalid_Amount_Args,
+    Invalid_Command_Callback,
+    Invalid_Command_Name,
 }
