@@ -1,9 +1,6 @@
 package cli
 
 import "core:os"
-import "core:fmt"
-import "core:slice"
-import "core:strings"
 
 
 run :: proc(app: Cli) -> Error {
