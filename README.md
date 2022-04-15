@@ -19,7 +19,7 @@ echo :: proc(args: []string) {
 
 main :: proc() {
     app := cli.Cli {
-        description = "A cli tool to color text",
+        description = "A cli tool that echoes text.",
     }
     cli.add(
         &app,
