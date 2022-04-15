@@ -7,7 +7,7 @@ Command :: struct {
     help:     string,
     nargs:    union {
         int,
-        Nargs,
+        Args,
     },
     action:   Actions,
 }
@@ -21,9 +21,8 @@ Cli :: struct {
 
 
 // Not implemented
-Nargs :: enum u8 {
+Args :: enum int {
     All,
-    Any,
 }
 
 
@@ -34,7 +33,7 @@ Actions :: enum u8 {
 }
 
 
-Error :: enum {
+Error :: enum int {
     None,
     Command_Not_Found,
     Invalid_Amount_Args,

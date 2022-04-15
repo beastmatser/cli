@@ -42,14 +42,14 @@ remove :: proc {
 }
 
 remove_command_by_name :: proc(app: ^Cli, command: string) -> Error {
-    commands := &app^.commands
-    if command in commands^ {
-        delete_key(commands, command)
+    commands := app^.commands
+    if command in commands {
+        delete_key(&commands, command)
         return .None
     }
     return .Command_Not_Found
 }
 
 remove_command_by_struct :: proc(app: ^Cli, command: Command) -> Error {
-    return remove_command_by_name(&(app^), command.name)
+    return remove_command_by_name(app, command.name)
 }
