@@ -7,29 +7,22 @@ A simple package to build command line apps in Odin.
 ```odin
 package main
 
+import "cli"
 import "core:fmt"
 import "core:strings"
-import "cli"
 
 
-echo :: proc(args: []string) {
+action :: proc(cli: cli.Cli, args: []string) {
     fmt.println(strings.join(args[1:], " "))
 }
 
 
 main :: proc() {
     app := cli.Cli {
-        description = "A cli tool that echoes text.",
+        description = "This is my simple cli tool!",
     }
-    cli.add(
-        &app,
-        cli.Command{
-            name = "echo",
-            callback = echo,
-            help = "Displays the given string.",
-            nargs = cli.Args.All,
-        },
-    )
-    cli.run(app)
+
+    cli.add(&app, cli.Command{name = "echo", action = action})
+    err := cli.run(app)
 }
 ```
