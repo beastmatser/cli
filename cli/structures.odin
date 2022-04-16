@@ -1,17 +1,17 @@
 package cli
 
 
-Cli :: struct {
+App :: struct {
     description:    string,
     commands:       map[string]Command,
     flags:          map[string]Flag,
     required_flags: map[string]Flag,
-    help:           proc(app: Cli),
+    help:           proc(app: App),
 }
 
 CommandBase :: struct($Args: typeid) {
     name:   string,
-    action: proc(app: Cli, args: Args),
+    action: proc(app: App, args: Args),
     help:   string,
     args:   Maybe(int),
 }

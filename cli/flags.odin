@@ -4,7 +4,7 @@ import "core:fmt"
 import "core:strings"
 
 
-add_flag :: proc(app: ^Cli, flag: Flag) -> Error {
+add_flag :: proc(app: ^App, flag: Flag) -> Error {
     flag_name := flag.name
     if flag_name == "" {
         return .Invalid_Flag_Name
@@ -21,7 +21,7 @@ add_flag :: proc(app: ^Cli, flag: Flag) -> Error {
 }
 
 
-remove_flag_by_name :: proc(app: ^Cli, flag: string) -> Error {
+remove_flag_by_name :: proc(app: ^App, flag: string) -> Error {
     flags := &app^.flags
     if flag in flags^ {
         delete_key(flags, flag)
@@ -30,6 +30,6 @@ remove_flag_by_name :: proc(app: ^Cli, flag: string) -> Error {
     return .Flag_Not_Found
 }
 
-remove_flag_by_struct :: proc(app: ^Cli, flag: Flag) -> Error {
+remove_flag_by_struct :: proc(app: ^App, flag: Flag) -> Error {
     return remove_command_by_name(app, flag.name)
 }
