@@ -11,30 +11,14 @@ find_command :: proc(app: Cli, command_name: string) -> Error {
     return .Command_Not_Found
 }
 
-check_amount_args :: proc(nargs: union {
-        int,
-        Args,
-    }) -> Error {
-    switch _ in nargs {
-    case int:
-        {
-            if len(os.args[2:]) != nargs {
-                return .Invalid_Amount_Args
-            }
-        }
-    case Args:
-        {
-            switch nargs {
-            case .All:
-                {
-                    return .None
-                }
-            }
-        }
+validate_args :: proc(command: Command, args: []string) -> Error {
+    if command.args == nil {
+        return .None
+    } else if command.args == len(args) {
+        return .None
     }
-    return .None
+    return .Invalid_Amount_Args
 }
-
 
 run :: proc(app: Cli) -> Error {
     args := os.args
@@ -51,8 +35,8 @@ run :: proc(app: Cli) -> Error {
         return .None
     }
     find_command(app, command_name) or_return
-    check_amount_args(command.nargs) or_return
+    validate_args(command, args[2:])
 
-    command.callback(args[1:])
+    command.action(app, args[1:])
     return .None
 }

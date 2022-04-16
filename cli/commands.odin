@@ -28,8 +28,8 @@ show_help :: proc(app: Cli) {
 add :: proc(app: ^Cli, command: Command) -> Error {
     if command.name == "" {
         return .Invalid_Command_Name
-    } else if command.callback == nil {
-        return .Invalid_Command_Callback
+    } else if command.action == nil {
+        return .Invalid_Command_Action
     }
 
     app^.commands[command.name] = command
