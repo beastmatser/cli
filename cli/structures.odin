@@ -7,6 +7,7 @@ App :: struct {
     flags:          map[string]Flag,
     required_flags: map[string]Flag,
     action:         proc(app: App, args: []string),
+    disable_help:   bool,
 }
 
 
@@ -19,9 +20,12 @@ Command :: struct {
 
 
 Flag :: struct {
-    using command: Command,
-    required:      bool,
-    choices:       []string,
+    name:     string,
+    help:     string,
+    args:     Maybe(int),
+    action:   proc(app: App, args: []string),
+    required: bool,
+    choices:  []string,
 }
 
 
@@ -32,4 +36,5 @@ Error :: enum int {
     Invalid_Amount_Args,
     Invalid_Command_Name,
     Invalid_Flag_Name,
+    Help_Command_Not_Found,
 }

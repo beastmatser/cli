@@ -6,7 +6,7 @@ import "core:fmt"
 
 add_help :: proc(app: ^App) {
     _, exists := app.commands["help"]
-    if !exists {
+    if !exists && !app.disable_help {
         add(
             app,
             Command{
@@ -44,10 +44,14 @@ validate_args :: proc(command: Command, args: []string) -> Error {
 }
 
 run :: proc(app: ^App) -> Error {
-    add_help(app) // adds a help a command if it does not exist
+    add_help(app) // adds a help a command if it does not exist or is disabled
 
     args := os.args
     if len(args) == 1 {
+        _, exists := app.commands["help"]
+        if !exists {
+            return .Help_Command_Not_Found
+        }
         app.commands["help"].action(app^, args)
         return .None
     }

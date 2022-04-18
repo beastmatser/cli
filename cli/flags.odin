@@ -4,19 +4,46 @@ import "core:fmt"
 import "core:strings"
 
 
+check_flag_name :: proc(name: string) -> Error {
+    if strings.contains(name, " ") {
+        fmt.println(red("A flag name cannot contains spaces."))
+        return .Invalid_Command_Name
+    }
+    if strings.has_prefix(name, "--") && len(name) == 3 {
+        fmt.println(
+            red(
+                "A flag name staring with two dashes must be a word, not a single character",
+            ),
+        )
+        return .Invalid_Flag_Name
+    } else if strings.has_prefix(name, "-") {
+        if len(name) != 2 {
+            fmt.println(
+                red(
+                    "A flag starting with a single dash must be followed by a single character.",
+                ),
+            )
+            return .Invalid_Flag_Name
+        } else if len(name) > 2 {
+            fmt.println(red("A flag containing a word must start with two dashes."))
+            return .Invalid_Flag_Name
+        }
+    }
+    return .None
+}
+
+
 add_flag :: proc(app: ^App, flag: Flag) -> Error {
-    flag_name := flag.name
-    if flag_name == "" {
+    if flag.name == "" {
+        fmt.println(red("A flag cannot be an empty string."))
         return .Invalid_Flag_Name
     }
-    if !strings.has_prefix(flag_name, "--") {
-        flag_name = fmt.aprintf("--%s", flag_name)
-    }
-    flag_name = strings.trim_right_space(flag_name)
-    flag_name = strings.trim_left_space(flag_name)
-    flag_name, _ = strings.replace(flag_name, " ", "-", -1)
+    check_flag_name(flag.name) or_return
 
-    app.flags[flag_name] = flag
+    app.flags[flag.name] = flag
+    if flag.required {
+        app.required_flags[flag.name] = flag
+    }
     return .None
 }
 

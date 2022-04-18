@@ -12,15 +12,30 @@ show_help :: proc(app: App, args: []string) {
             len_longest_word = len(name)
         }
     }
+    for name, flag in app.flags {
+        if len(name) > len_longest_word {
+            len_longest_word = len(name)
+        }
+    }
     len_longest_word += 5
     fmt.println(app.description if app.description != "" else "A simple cli tool.")
-    fmt.println("Usage:\n  ", args[0], "<command> [<args>]\n")
+    fmt.println("Usage:\n  ", args[0], "<command> [<args>]")
+    fmt.println("\nCommands:" if len(app.commands) != 0 else "\n")
     for name, command in app.commands {
         fmt.printf(
             "   %s%s%s\n",
             name,
             strings.repeat(" ", len_longest_word - len(name)),
             command.help,
+        )
+    }
+    fmt.println("\nFlags:" if len(app.flags) != 0 else "")
+    for name, flag in app.flags {
+        fmt.printf(
+            "   %s%s%s\n",
+            name,
+            strings.repeat(" ", len_longest_word - len(name)),
+            flag.help,
         )
     }
 }
