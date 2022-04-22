@@ -20,7 +20,9 @@ Command :: struct {
 
 
 Flag :: struct {
-    name:     string,
+    short:    string,
+    long:     string,
+    // aliases:  []string,
     help:     string,
     args:     Maybe(int),
     action:   proc(app: App, args: []string),

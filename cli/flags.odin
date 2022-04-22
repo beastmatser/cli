@@ -4,45 +4,53 @@ import "core:fmt"
 import "core:strings"
 
 
-check_flag_name :: proc(name: string) -> Error {
-    if strings.contains(name, " ") {
-        fmt.println(red("A flag name cannot contains spaces."))
-        return .Invalid_Command_Name
-    }
-    if strings.has_prefix(name, "--") && len(name) == 3 {
+check_short_flag_name :: proc(name: string) -> Error {
+    switch true {
+    case len(name) != 2:
         fmt.println(
             red(
-                "A flag name staring with two dashes must be a word, not a single character",
+                "A short flag name must have a total length of two, and the first charachter must be a dash.",
             ),
         )
-        return .Invalid_Flag_Name
-    } else if strings.has_prefix(name, "-") {
-        if len(name) != 2 {
-            fmt.println(
-                red(
-                    "A flag starting with a single dash must be followed by a single character.",
-                ),
-            )
-            return .Invalid_Flag_Name
-        } else if len(name) > 2 {
-            fmt.println(red("A flag containing a word must start with two dashes."))
-            return .Invalid_Flag_Name
-        }
+    case strings.contains(name, " "):
+        fmt.println(red("A flag name cannot contain any whitespaces."))
+    case !strings.has_prefix(name, "-"):
+        fmt.println(red("A short flag name must start with a single dash."))
+    case:
+        return .None
     }
-    return .None
+    return .Invalid_Flag_Name
+}
+
+
+check_long_flag_name :: proc(name: string) -> Error {
+    switch true {
+    case name == "":
+        fmt.println(red("A long flag name is required."))
+    case !strings.has_prefix(name, "--"):
+        fmt.println(red("A long flag name must start with two dashes."))
+    case len(name) == 2:
+        fmt.println(red("A long flag name "))
+    case strings.contains(name, " "):
+        fmt.println(
+            red(
+                "A flag name must start with two dashes, if your flag name uses multiple words, replace the spaces with dashes.",
+            ),
+        )
+    case:
+        return .None
+    }
+    return .Invalid_Flag_Name
 }
 
 
 add_flag :: proc(app: ^App, flag: Flag) -> Error {
-    if flag.name == "" {
-        fmt.println(red("A flag cannot be an empty string."))
-        return .Invalid_Flag_Name
-    }
-    check_flag_name(flag.name) or_return
+    check_long_flag_name(flag.long) or_return
+    check_short_flag_name(flag.short) or_return
 
-    app.flags[flag.name] = flag
+    app.flags[flag.long] = flag
     if flag.required {
-        app.required_flags[flag.name] = flag
+        app.required_flags[flag.long] = flag
     }
     return .None
 }
@@ -58,5 +66,5 @@ remove_flag_by_name :: proc(app: ^App, flag: string) -> Error {
 }
 
 remove_flag_by_struct :: proc(app: ^App, flag: Flag) -> Error {
-    return remove_command_by_name(app, flag.name)
+    return remove_command_by_name(app, flag.long)
 }
