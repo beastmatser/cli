@@ -48,6 +48,15 @@ add_flag :: proc(app: ^App, flag: ^Flag) -> Error {
     check_long_flag_name(flag.long) or_return
     check_short_flag_name(flag.short) or_return
 
+    empty_range: [2]int
+    if flag.args != nil && flag.range == empty_range {
+        fmt.println(red("Properties 'args' and 'range' cannot be set simultanously."))
+        return .Invalid_Flag_Properties
+    } else if flag.range[0] > flag.range[1] {
+        fmt.println(red("The first element of the range property must be smaller than its second one."))
+        return .Invalid_Flag_Properties
+    }
+
     app.flags[flag.long] = flag^
     if flag.required {
         app.required_flags[flag.long] = flag^

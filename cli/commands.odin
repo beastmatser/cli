@@ -50,6 +50,14 @@ add :: proc(app: ^App, command: ^Command) -> Error {
         )
         return .Invalid_Command_Name
     }
+    empty_range: [2]int
+    if command.args != nil && command.range == empty_range {
+        fmt.println(red("Properties 'args' and 'range' cannot be set simultanously."))
+        return .Invalid_Command_Properties
+    } else if command.range[0] > command.range[1] {
+        fmt.println(red("The first element of the range property must be smaller than its second one."))
+        return .Invalid_Command_Properties
+    }
     if len(command.aliases) != 0 {
         for alias in command.aliases {
             app.aliases.commands[alias] = command

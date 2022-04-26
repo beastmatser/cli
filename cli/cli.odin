@@ -29,17 +29,28 @@ find_command :: proc(app: App, command_name: string) -> Error {
 }
 
 validate_args :: proc(command: Command, args: []string) -> Error {
-    if command.args == nil {
-        return .None
-    } else if command.args == len(args) {
-        return .None
+    switch true {
+        case command.args == nil:
+            return .None
+        case command.args == len(args):
+            return .None
+        case command.range[0] + command.range[1] != 0:
+            if command.range[0] < len(args) && command.range[1] > len(args) {
+                return .None
+            }
+            fmt.printf(
+                red("Expected inbetween %i and %i arguments, got %i instead.\n"),
+                command.range[0],
+                command.range[1],
+                len(args),
+            )
+        case:
+            fmt.printf(
+                red("Expected %i arguments, got %i instead.\n"),
+                command.args,
+                len(args),
+            )
     }
-    fmt.printf(
-        red("Command '%s' expected %i arguments, got %i instead.\n"),
-        command.name,
-        command.args,
-        len(args),
-    )
     return .Invalid_Amount_Args
 }
 

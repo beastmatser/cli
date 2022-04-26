@@ -22,6 +22,7 @@ Command :: struct {
     aliases: []string,
     help:    string,
     args:    Maybe(int),
+    range:   [2]int,
     action:  proc(app: App, args: []string),
 }
 
@@ -32,6 +33,7 @@ Flag :: struct {
     aliases:  []string,
     help:     string,
     args:     Maybe(int),
+    range:    [2]int,
     action:   proc(app: App, args: []string),
     required: bool,
     choices:  []string,
@@ -42,8 +44,10 @@ Error :: enum int {
     None,
     Command_Not_Found,
     Flag_Not_Found,
+    Help_Command_Not_Found,
     Invalid_Amount_Args,
     Invalid_Command_Name,
+    Invalid_Command_Properties,
     Invalid_Flag_Name,
-    Help_Command_Not_Found,
+    Invalid_Flag_Properties,
 }
