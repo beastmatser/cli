@@ -44,27 +44,43 @@ check_long_flag_name :: proc(name: string) -> Error {
 }
 
 
-add_flag :: proc(app: ^App, flag: Flag) -> Error {
+add_flag :: proc(app: ^App, flag: ^Flag) -> Error {
     check_long_flag_name(flag.long) or_return
     check_short_flag_name(flag.short) or_return
 
-    app.flags[flag.long] = flag
+    app.flags[flag.long] = flag^
     if flag.required {
-        app.required_flags[flag.long] = flag
+        app.required_flags[flag.long] = flag^
+    }
+    if len(flag.aliases) != 0 {
+        for alias in flag.aliases {
+            app.aliases.flags[alias] = flag
+        }
     }
     return .None
 }
 
 
+remove_flag :: proc {
+    remove_flag_by_name,
+    remove_flag_by_struct,
+}
+
+
 remove_flag_by_name :: proc(app: ^App, flag: string) -> Error {
-    flags := &app.flags
-    if flag in flags^ {
-        delete_key(flags, flag)
-        return .None
-    }
-    return .Flag_Not_Found
+    return remove_flag_by_struct(app, app.flags[flag])
 }
 
 remove_flag_by_struct :: proc(app: ^App, flag: Flag) -> Error {
-    return remove_command_by_name(app, flag.long)
+    flags := &app.flags
+    if flag.long in flags {
+        delete_key(flags, flag.long)
+        if len(flag.aliases) != 0 {
+            for alias in flag.aliases {
+                delete_key(&app.aliases.flags, alias)
+            }
+        }
+        return .None
+    }
+    return .Flag_Not_Found
 }

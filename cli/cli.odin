@@ -9,7 +9,7 @@ add_help :: proc(app: ^App) {
     if !exists && !app.disable_help {
         add(
             app,
-            Command{
+            &Command{
                 name = "help",
                 help = "Shows this message.",
                 args = 0,
@@ -24,7 +24,7 @@ find_command :: proc(app: App, command_name: string) -> Error {
     if command_name in app.commands {
         return .None
     }
-    fmt.printf("\x1b[31mUnknown command: %s.\x1b[0m\n", command_name)
+    fmt.printf(red("Unknown command: %s.\n"), command_name)
     return .Command_Not_Found
 }
 
@@ -35,7 +35,7 @@ validate_args :: proc(command: Command, args: []string) -> Error {
         return .None
     }
     fmt.printf(
-        "\x1b[31mCommand '%s' expected %i arguments, got %i instead.\x1b[0m\n",
+        red("Command '%s' expected %i arguments, got %i instead.\n"),
         command.name,
         command.args,
         len(args),
@@ -48,11 +48,11 @@ run :: proc(app: ^App) -> Error {
 
     args := os.args
     if len(args) == 1 {
-        _, exists := app.commands["help"]
+        help, exists := app.commands["help"]
         if !exists {
             return .Help_Command_Not_Found
         }
-        app.commands["help"].action(app^, args)
+        help.action(app^, args)
         return .None
     }
 

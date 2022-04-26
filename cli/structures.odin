@@ -7,22 +7,29 @@ App :: struct {
     flags:          map[string]Flag,
     required_flags: map[string]Flag,
     action:         proc(app: App, args: []string),
+    aliases:        Aliases,
     disable_help:   bool,
+}
+
+Aliases :: struct {
+    commands: map[string]^Command,
+    flags:    map[string]^Flag,
 }
 
 
 Command :: struct {
-    name:   string,
-    help:   string,
-    args:   Maybe(int),
-    action: proc(app: App, args: []string),
+    name:    string,
+    aliases: []string,
+    help:    string,
+    args:    Maybe(int),
+    action:  proc(app: App, args: []string),
 }
 
 
 Flag :: struct {
     short:    string,
     long:     string,
-    // aliases:  []string,
+    aliases:  []string,
     help:     string,
     args:     Maybe(int),
     action:   proc(app: App, args: []string),
