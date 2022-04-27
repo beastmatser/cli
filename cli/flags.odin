@@ -6,10 +6,12 @@ import "core:strings"
 
 check_short_flag_name :: proc(name: string) -> Error {
     switch true {
+    case name == "":
+        return .None
     case len(name) != 2:
         fmt.println(
             red(
-                "A short flag name must have a total length of two, and the first charachter must be a dash.",
+                "A short flag name must have a total length of two, and the first characters must be a dash.",
             ),
         )
     case strings.contains(name, " "):
@@ -29,8 +31,8 @@ check_long_flag_name :: proc(name: string) -> Error {
         fmt.println(red("A long flag name is required."))
     case !strings.has_prefix(name, "--"):
         fmt.println(red("A long flag name must start with two dashes."))
-    case len(name) == 2:
-        fmt.println(red("A long flag name "))
+    case len(name) <= 3:
+        fmt.println(red("A long flag name should be two dashes followed by at least two characters."))
     case strings.contains(name, " "):
         fmt.println(
             red(
@@ -48,14 +50,7 @@ add_flag :: proc(app: ^App, flag: ^Flag) -> Error {
     check_long_flag_name(flag.long) or_return
     check_short_flag_name(flag.short) or_return
 
-    empty_range: [2]int
-    if flag.args != nil && flag.range == empty_range {
-        fmt.println(red("Properties 'args' and 'range' cannot be set simultanously."))
-        return .Invalid_Flag_Properties
-    } else if flag.range[0] > flag.range[1] {
-        fmt.println(red("The first element of the range property must be smaller than its second one."))
-        return .Invalid_Flag_Properties
-    }
+    check_range(flag.args, flag.range) or_return
 
     app.flags[flag.long] = flag^
     if flag.required {
@@ -91,5 +86,6 @@ remove_flag_by_struct :: proc(app: ^App, flag: Flag) -> Error {
         }
         return .None
     }
+    fmt.printf(red("'%s' cannot be removed, since it is not a flag.\n"), flag.long)
     return .Flag_Not_Found
 }

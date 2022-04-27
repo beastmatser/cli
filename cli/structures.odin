@@ -47,7 +47,6 @@ Error :: enum int {
     Help_Command_Not_Found,
     Invalid_Amount_Args,
     Invalid_Command_Name,
-    Invalid_Command_Properties,
     Invalid_Flag_Name,
-    Invalid_Flag_Properties,
+    Invalid_Properties,
 }
