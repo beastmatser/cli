@@ -13,6 +13,5 @@ jobs:
           git clone https://github.com/odin-lang/Odin
           cd Odin
           ./build_odin.sh release
-          alias odin=./odin
       - name: Run tests
-        run: ./test.sh
+        run: ./tests.sh
