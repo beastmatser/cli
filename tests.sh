@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
-# check if command 'odin' exists
+# for github actions
 if ! command -v odin > /dev/null; then
-    alias odin='./odin'
+    cd Odin
+    ./odin run ../run_tests.odin -file
+    exit 0
 fi
 
 odin run run_tests.odin -file
