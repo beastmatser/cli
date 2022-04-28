@@ -31,6 +31,7 @@ main :: proc() {
     test_remove_flag(t)
     test_valid_long_flags(t)
     test_valid_short_flags(t)
+    test_help(t)
 
     fmt.printf("%v/%v tests successful.\n", TEST_count - TEST_fail, TEST_count)
     if TEST_fail > 0 {
