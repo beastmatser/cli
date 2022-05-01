@@ -30,12 +30,10 @@ find_command :: proc(app: App, command_name: string) -> Error {
 
 validate_args :: proc(command: Command, args: []string) -> Error {
     switch true {
-        case command.args == nil:
-            return .None
         case command.args == len(args):
             return .None
         case command.range[0] + command.range[1] != 0:
-            if command.range[0] < len(args) && command.range[1] > len(args) {
+            if command.range[0] <= len(args) && command.range[1] >= len(args) {
                 return .None
             }
             fmt.printf(
@@ -54,10 +52,10 @@ validate_args :: proc(command: Command, args: []string) -> Error {
     return .Invalid_Amount_Args
 }
 
-run :: proc(app: ^App) -> Error {
+run :: proc(app: ^App, _args := []string{}) -> Error {
     add_help(app) // adds a help a command if it does not exist or is disabled
+    args := os.args if len(_args) == 0 else _args
 
-    args := os.args
     if len(args) == 1 {
         help, exists := app.commands["help"]
         if !exists {
@@ -76,6 +74,10 @@ run :: proc(app: ^App) -> Error {
     if command.action != nil {
         command.action(app^, args)
     } else {
+        if app.action == nil {
+            fmt.println(red("No action defined for."))
+            return .Invalid_Properties
+        }
         app->action(args)
     }
     return .None
