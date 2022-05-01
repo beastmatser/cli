@@ -52,14 +52,18 @@ add_flag :: proc(app: ^App, flag: ^Flag) -> Error {
 
     check_range(flag.args, flag.range) or_return
 
-    app.flags[flag.long] = flag^
-    if flag.required {
-        app.required_flags[flag.long] = flag^
-    }
     if len(flag.aliases) != 0 {
+        for alias in flag.aliases {
+            check_long_flag_name(alias) or_return
+        }
+        // only add all aliases if all are valid
         for alias in flag.aliases {
             app.aliases.flags[alias] = flag
         }
+    }
+    app.flags[flag.long] = flag^
+    if flag.required {
+        app.required_flags[flag.long] = flag^
     }
     return .None
 }

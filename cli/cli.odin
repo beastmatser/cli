@@ -42,6 +42,8 @@ validate_args :: proc(command: Command, args: []string) -> Error {
                 command.range[1],
                 len(args),
             )
+        case command.args == nil:
+            return .None
         case:
             fmt.printf(
                 red("Expected %i arguments, got %i instead.\n"),
@@ -51,6 +53,20 @@ validate_args :: proc(command: Command, args: []string) -> Error {
     }
     return .Invalid_Amount_Args
 }
+
+invoke_action :: proc(app: App, command: Command, args: []string) -> Error {
+    if command.action != nil {
+        command.action(app, args)
+    } else {
+        if app.action == nil {
+            fmt.println(red("No action defined!"))
+            return .Invalid_Properties
+        }
+        app->action(args)
+    }
+    return .None
+}
+
 
 run :: proc(app: ^App, _args := []string{}) -> Error {
     add_help(app) // adds a help a command if it does not exist or is disabled
@@ -71,14 +87,5 @@ run :: proc(app: ^App, _args := []string{}) -> Error {
     find_command(app^, command_name) or_return
     validate_args(command, args[2:]) or_return
 
-    if command.action != nil {
-        command.action(app^, args)
-    } else {
-        if app.action == nil {
-            fmt.println(red("No action defined for."))
-            return .Invalid_Properties
-        }
-        app->action(args)
-    }
-    return .None
+    return invoke_action(app^, command, args[2:])
 }
