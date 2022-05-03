@@ -96,29 +96,31 @@ validate_args_flags :: proc(app: App, manager: Manager) -> Error {
             switch true {
                 case len(values) == flag.args:
                     return .None
-                    case flag.range[0] + flag.range[1] != 0:
-                        if flag.range[0] <= len(values) && flag.range[1] >= len(values) {
-                            return .None
-                        }
-                        fmt.printf(
-                            red("Expected inbetween %i and %i arguments, got %i instead.\n"),
-                            flag.range[0],
-                            flag.range[1],
-                            len(values),
-                        )
-                        break
-                    case flag.args == nil:
+                case flag.range[0] + flag.range[1] != 0:
+                    if flag.range[0] <= len(values) && flag.range[1] >= len(values) {
                         return .None
-                    case:
-                        fmt.printf(
-                            red("Expected %i arguments, got %i instead.\n"),
-                            flag.args,
-                            len(values),
-                        )
-                        break
                     }
+                    fmt.printf(
+                        red("Expected inbetween %i and %i arguments, got %i instead.\n"),
+                        flag.range[0],
+                        flag.range[1],
+                        len(values),
+                    )
+                    break
+                case flag.args == nil:
+                    return .None
+                case:
+                    fmt.printf(
+                        red("Expected %i arguments, got %i instead.\n"),
+                        flag.args,
+                        len(values),
+                    )
+                    break
                 }
+            } else {
+                return .None
             }
+        }
     return .Invalid_Amount_Args
 }
 
