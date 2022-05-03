@@ -8,7 +8,6 @@ App :: struct {
     required_flags: map[string]Flag,
     action:         Action,
     aliases:        Aliases,
-    disable_help:   bool,
 }
 
 Aliases :: struct {
@@ -45,8 +44,8 @@ Flag :: struct {
 
 Manager :: struct {
     args:     []string,
-    has_flag: proc(manager: Manager, app: App, flag: Flag) -> bool,
-    get_flag: proc(manager: Manager, app: App, flag: Flag) -> []string,
+    has_flag: proc(manager: Manager, app: App, flag: string) -> bool,
+    get_flag: proc(manager: Manager, app: App, flag: string) -> []string,
 }
 
 

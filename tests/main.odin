@@ -27,7 +27,6 @@ when ODIN_TEST {
 
 main :: proc() {
     t := &testing.T{}
-    test_help(t)
     test_input(t)
     test_manager(t)
     test_properties(t)
