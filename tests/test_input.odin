@@ -21,7 +21,7 @@ test_properties :: proc(t: ^testing.T) {
     expect(t, "--flag" in app.required_flags, "Required flag should be added to required_flags!")
 }
 
-dummy :: proc(app: cli.App, args: []string) {}
+dummy :: proc(app: cli.App, manager: cli.Manager) {}
 
 @test
 test_input :: proc(t: ^testing.T) {

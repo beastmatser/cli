@@ -19,13 +19,13 @@ add_help :: proc(app: ^App) {
     }
 }
 
-
-find_command :: proc(app: App, command_name: string) -> Error {
-    if command_name in app.commands {
-        return .None
+find_command :: proc(app: App, command_name: string) -> (Command, Error) {
+    command, exists := app.commands[command_name]
+    if exists {
+        return command, .None
     }
     fmt.printf(red("Unknown command: %s.\n"), command_name)
-    return .Command_Not_Found
+    return command, .Command_Not_Found
 }
 
 validate_args :: proc(command: Command, args: []string) -> Error {
@@ -56,17 +56,16 @@ validate_args :: proc(command: Command, args: []string) -> Error {
 
 invoke_action :: proc(app: App, command: Command, args: []string) -> Error {
     if command.action != nil {
-        command.action(app, args)
+        command.action(app, create_manager(args))
     } else {
         if app.action == nil {
             fmt.println(red("No action defined!"))
             return .Invalid_Properties
         }
-        app->action(args)
+        app->action(create_manager(args))
     }
     return .None
 }
-
 
 run :: proc(app: ^App, _args := []string{}) -> Error {
     add_help(app) // adds a help a command if it does not exist or is disabled
@@ -77,14 +76,13 @@ run :: proc(app: ^App, _args := []string{}) -> Error {
         if !exists {
             return .Help_Command_Not_Found
         }
-        help.action(app^, args)
+        help.action(app^, create_manager(args))
         return .None
     }
 
     command_name := args[1]
-    command := app.commands[command_name]
+    command := find_command(app^, command_name) or_return
 
-    find_command(app^, command_name) or_return
     validate_args(command, args[2:]) or_return
 
     return invoke_action(app^, command, args[2:])

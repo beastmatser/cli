@@ -5,7 +5,8 @@ import "core:os"
 import "core:strings"
 
 
-show_help :: proc(app: App, args: []string) {
+show_help :: proc(app: App, manager: Manager) {
+    args := manager.args
     len_longest_word: int
     for name, command in app.commands {
         if len(name) > len_longest_word {

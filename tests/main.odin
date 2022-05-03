@@ -27,13 +27,14 @@ when ODIN_TEST {
 
 main :: proc() {
     t := &testing.T{}
+    test_help(t)
+    test_input(t)
+    test_manager(t)
+    test_properties(t)
     test_remove_command(t)
     test_remove_flag(t)
     test_valid_long_flags(t)
     test_valid_short_flags(t)
-    test_help(t)
-    test_properties(t)
-    test_input(t)
 
     fmt.printf("%v/%v tests successful.\n", TEST_count - TEST_fail, TEST_count)
     if TEST_fail > 0 {
