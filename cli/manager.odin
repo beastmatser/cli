@@ -4,14 +4,20 @@ import "core:slice"
 
 
 Manager :: struct {
-    args:     []string,
-    has_flag: proc(manager: Manager, app: App, flag: string) -> bool,
-    get_flag: proc(manager: Manager, app: App, flag: string) -> []string,
+    args:        []string,
+    has_flag:    proc(manager: Manager, app: App, flag: string) -> bool,
+    get_flag:    proc(manager: Manager, app: App, flag: string) -> []string,
+    get_command: proc(manager: Manager, app: App, command: string) -> []string,
 }
 
 
 create_manager :: proc(args: []string) -> Manager {
-    return Manager{ args = args, has_flag = default_has_flag, get_flag = default_get_flag }
+    return Manager{
+        args = args,
+        has_flag = default_has_flag,
+        get_flag = default_get_flag,
+        get_command = default_get_command,
+    }
 }
 
 get_flag_names :: proc(app: App, flag_name: string) -> []string {
@@ -25,6 +31,14 @@ get_flag_names :: proc(app: App, flag_name: string) -> []string {
         }
     }
     return []string{}
+}
+
+is_flag :: proc(app: App, flag_name: string) -> bool {
+    all_flag_names := get_flag_names(app, flag_name)
+    if slice.contains(all_flag_names[:], flag_name) {
+        return true
+    }
+    return false
 }
 
 get_all_flag_names :: proc(app: App) -> []string {
@@ -58,6 +72,23 @@ default_get_flag :: proc(manager: Manager, app: App, flag: string) -> []string {
     values := [dynamic]string{}
     loop: for arg, n in manager.args {
         if slice.contains(flag_names[:], arg) {
+            for i := n + 1; i < len(manager.args); i += 1 {
+                if slice.contains(all_flag_names[:], manager.args[i]) {
+                    break loop
+                }
+                append(&values, manager.args[i])
+            }
+        }
+    }
+    return values[:]
+}
+
+default_get_command :: proc(manager: Manager, app: App, command: string) -> []string {
+    all_flag_names := get_all_flag_names(app)
+
+    values := [dynamic]string{}
+    loop: for arg, n in manager.args {
+        if arg == command {
             for i := n + 1; i < len(manager.args); i += 1 {
                 if slice.contains(all_flag_names[:], manager.args[i]) {
                     break loop
