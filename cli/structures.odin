@@ -58,4 +58,5 @@ Error :: enum int {
     Invalid_Command_Name,
     Invalid_Flag_Name,
     Invalid_Properties,
+    Required_Flag_Missing,
 }

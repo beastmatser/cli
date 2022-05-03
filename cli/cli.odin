@@ -5,15 +5,14 @@ import "core:fmt"
 
 
 add_help :: proc(app: ^App) {
-    _, exists := app.commands["help"]
-    if !exists && !app.disable_help {
-        add(
+    _, exists := app.flags["--help"]
+    if !exists {
+        add_flag(
             app,
-            &Command{
-                name = "help",
+            &Flag{
+                long = "--help",
+                short = "-h",
                 help = "Shows this message.",
-                args = 0,
-                action = show_help,
             },
         )
     }
@@ -54,6 +53,17 @@ validate_args :: proc(command: Command, args: []string) -> Error {
     return .Invalid_Amount_Args
 }
 
+check_required_flags :: proc(app: App, manager: Manager) -> Error {
+    for _, flag in app.required_flags {
+        if !manager->has_flag(app, flag.long) {
+            fmt.printf(red("Missing required flag: %s.\n"), flag.long)
+            fmt.printf(red("Use --help to see all available flags.\n"))
+            return .Required_Flag_Missing
+        }
+    }
+    return .None
+}
+
 invoke_action :: proc(app: App, command: Command, args: []string) -> Error {
     if command.action != nil {
         command.action(app, create_manager(args))
@@ -68,21 +78,19 @@ invoke_action :: proc(app: App, command: Command, args: []string) -> Error {
 }
 
 run :: proc(app: ^App, _args := []string{}) -> Error {
-    add_help(app) // adds a help a command if it does not exist or is disabled
     args := os.args if len(_args) == 0 else _args
+    add_help(app) // adds a help flag if it does not exist
+    manager := create_manager(args)
 
-    if len(args) == 1 {
-        help, exists := app.commands["help"]
-        if !exists {
-            return .Help_Command_Not_Found
-        }
-        help.action(app^, create_manager(args))
+    if len(args) == 1 || manager->has_flag(app^, "--help") {
+        show_help(app^, manager)
         return .None
     }
 
     command_name := args[1]
     command := find_command(app^, command_name) or_return
 
+    check_required_flags(app^, manager) or_return
     validate_args(command, args[2:]) or_return
 
     return invoke_action(app^, command, args[2:])
