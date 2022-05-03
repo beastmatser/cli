@@ -3,6 +3,13 @@ package cli
 import "core:slice"
 
 
+Manager :: struct {
+    args:     []string,
+    has_flag: proc(manager: Manager, app: App, flag: string) -> bool,
+    get_flag: proc(manager: Manager, app: App, flag: string) -> []string,
+}
+
+
 create_manager :: proc(args: []string) -> Manager {
     return Manager{ args = args, has_flag = default_has_flag, get_flag = default_get_flag }
 }

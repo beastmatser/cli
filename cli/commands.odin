@@ -5,6 +5,16 @@ import "core:os"
 import "core:strings"
 
 
+Command :: struct {
+    name:    string,
+    aliases: []string,
+    help:    string,
+    args:    Maybe(int),
+    range:   [2]int,
+    action:  proc(app: App, manager: Manager),
+}
+
+
 show_help :: proc(app: App, manager: Manager) {
     args := manager.args
     len_longest_word: int

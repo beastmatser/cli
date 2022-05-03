@@ -4,6 +4,20 @@ import "core:fmt"
 import "core:strings"
 
 
+Flag :: struct {
+    short:    string,
+    long:     string,
+    aliases:  []string,
+    help:     string,
+    args:     Maybe(int),
+    range:    [2]int,
+    action:   proc(app: App, manager: Manager),
+    required: bool,
+    choices:  []string,
+    // command:  Command,
+}
+
+
 check_short_flag_name :: proc(name: string) -> Error {
     switch true {
     case name == "":

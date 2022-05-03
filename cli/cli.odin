@@ -4,6 +4,21 @@ import "core:os"
 import "core:fmt"
 
 
+App :: struct {
+    description:    string,
+    commands:       map[string]Command,
+    flags:          map[string]Flag,
+    required_flags: map[string]Flag,
+    action:         proc(app: App, manager: Manager),
+    aliases:        Aliases,
+}
+
+Aliases :: struct {
+    commands: map[string]^Command,
+    flags:    map[string]^Flag,
+}
+
+
 add_help :: proc(app: ^App) {
     _, exists := app.flags["--help"]
     if !exists {
