@@ -70,9 +70,10 @@ default_get_flag :: proc(manager: Manager, app: App, flag: string) -> []string {
     all_flag_names := get_all_flag_names(app)
 
     values := [dynamic]string{}
-    loop: for arg, n in manager.args {
-        if slice.contains(flag_names[:], arg) {
-            for i := n + 1; i < len(manager.args); i += 1 {
+    loop: for i := 0; i < len(manager.args); i += 1 {
+        if manager.args[i] == flag {
+            for j := i + 1; j < len(manager.args); j += 1 {
+                i += 1
                 if slice.contains(all_flag_names[:], manager.args[i]) {
                     break loop
                 }
@@ -87,9 +88,10 @@ default_get_command :: proc(manager: Manager, app: App, command: string) -> []st
     all_flag_names := get_all_flag_names(app)
 
     values := [dynamic]string{}
-    loop: for arg, n in manager.args {
-        if arg == command {
-            for i := n + 1; i < len(manager.args); i += 1 {
+    loop: for i := 0; i < len(manager.args); i += 1 {
+        if manager.args[i] == command {
+            for j := i + 1; j < len(manager.args); j += 1 {
+                i += 1
                 if slice.contains(all_flag_names[:], manager.args[i]) {
                     break loop
                 }

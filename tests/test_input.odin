@@ -38,7 +38,6 @@ test_input :: proc(t: ^testing.T) {
 
     cli.add(app, &cli.Command{ name = "test2", range = [2]int{1, 3} })
     err4 := cli.run(app, []string{"./test.exe", "test2", "1"})
-    fmt.println(err4)
     expect(t, err4 == cli.Error.None, "Correct amount of arguments should not return an error!")
 
     err5 := cli.run(app, []string{"./test.exe", "test2", "1", "2"})
