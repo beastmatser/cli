@@ -1,7 +1,6 @@
 package cli
 
 import "core:fmt"
-import "core:os"
 import "core:strings"
 
 
@@ -14,42 +13,6 @@ Command :: struct {
     action:  proc(app: App, manager: Manager),
 }
 
-
-show_help :: proc(app: App, manager: Manager) {
-    args := manager.args
-    len_longest_word: int
-    for name, command in app.commands {
-        if len(name) > len_longest_word {
-            len_longest_word = len(name)
-        }
-    }
-    for name, flag in app.flags {
-        if len(name) > len_longest_word {
-            len_longest_word = len(name)
-        }
-    }
-    len_longest_word += 5
-    fmt.println(app.description if app.description != "" else "A simple cli tool.")
-    fmt.println("Usage:\n  ", args[0], "<command> [<args>]")
-    fmt.println("\nCommands:" if len(app.commands) != 0 else "\n")
-    for name, command in app.commands {
-        fmt.printf(
-            "   %s%s%s\n",
-            name,
-            strings.repeat(" ", len_longest_word - len(name)),
-            command.help,
-        )
-    }
-    fmt.println("\nFlags:" if len(app.flags) != 0 else "")
-    for name, flag in app.flags {
-        fmt.printf(
-            "   %s%s%s\n",
-            name,
-            strings.repeat(" ", len_longest_word - len(name)),
-            flag.help,
-        )
-    }
-}
 
 add :: proc(app: ^App, command: ^Command) -> Error {
     if command.name == "" || strings.contains(command.name, " ") {
