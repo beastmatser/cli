@@ -4,6 +4,7 @@ import "core:fmt"
 import "core:strings"
 
 
+@private
 aliases_length :: proc(aliases: []string) -> int {
     length: int
     for alias in aliases {
@@ -12,6 +13,7 @@ aliases_length :: proc(aliases: []string) -> int {
     return length
 }
 
+@private
 message :: proc(name: string, aliases: []string, len_longest_word: int, length_words: map[string]int, help: string) {
     fmt.printf(
         "   %s%s%s%s%s\n",

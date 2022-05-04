@@ -17,6 +17,7 @@ Flag :: struct {
 }
 
 
+@private
 check_short_flag_name :: proc(name: string) -> Error {
     switch true {
     case name == "":
@@ -37,7 +38,7 @@ check_short_flag_name :: proc(name: string) -> Error {
     return .Invalid_Flag_Name
 }
 
-
+@private
 check_long_flag_name :: proc(name: string) -> Error {
     switch true {
     case name == "":

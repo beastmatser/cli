@@ -14,12 +14,14 @@ App :: struct {
     aliases:        Aliases,
 }
 
+@private
 Aliases :: struct {
     commands: map[string]^Command,
     flags:    map[string]^Flag,
 }
 
 
+@private
 add_help :: proc(app: ^App) {
     _, exists := app.flags["--help"]
     if !exists {
@@ -34,6 +36,7 @@ add_help :: proc(app: ^App) {
     }
 }
 
+@private
 find_command :: proc(app: App, command_name: string) -> Command {
     for _, command in app.commands {
         if command.name == command_name {
@@ -48,6 +51,7 @@ find_command :: proc(app: App, command_name: string) -> Command {
     return Command{}
 }
 
+@private
 find_flag :: proc(app: App, flag_name: string) -> Flag {
     for _, flag in app.flags {
         if flag.long == flag_name || flag.short == flag_name {
@@ -62,6 +66,7 @@ find_flag :: proc(app: App, flag_name: string) -> Flag {
     return Flag{}
 }
 
+@private
 validate_args_command :: proc(command: Command, args: []string) -> Error {
     switch true {
         case command.args == len(args):
@@ -88,6 +93,7 @@ validate_args_command :: proc(command: Command, args: []string) -> Error {
     return .Invalid_Args
 }
 
+@private
 validate_args_flags :: proc(app: App, manager: Manager) -> Error {
     args := manager.args
     for arg in args {
@@ -136,6 +142,7 @@ validate_args_flags :: proc(app: App, manager: Manager) -> Error {
     return .None
 }
 
+@private
 check_required_flags :: proc(app: App, manager: Manager) -> Error {
     for _, flag in app.required_flags {
         if !manager->has_flag(app, flag.long) {
@@ -147,6 +154,7 @@ check_required_flags :: proc(app: App, manager: Manager) -> Error {
     return .None
 }
 
+@private
 invoke_action :: proc(app: App, command: Command, manager: Manager) -> Error {
     if command.action != nil {
         command.action(app, manager)

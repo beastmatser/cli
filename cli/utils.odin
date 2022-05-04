@@ -16,6 +16,7 @@ Error :: enum {
 }
 
 
+@private
 check_range :: proc(args: Maybe(int), range: [2]int) -> Error {
     empty_range: [2]int
     if args != nil && range != empty_range {
