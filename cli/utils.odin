@@ -8,7 +8,7 @@ Error :: enum {
     Command_Not_Found,
     Flag_Not_Found,
     Help_Command_Not_Found,
-    Invalid_Amount_Args,
+    Invalid_Args,
     Invalid_Command_Name,
     Invalid_Flag_Name,
     Invalid_Properties,

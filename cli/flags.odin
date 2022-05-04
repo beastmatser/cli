@@ -14,7 +14,6 @@ Flag :: struct {
     action:   proc(app: App, manager: Manager),
     required: bool,
     choices:  []string,
-    // command:  Command,
 }
 
 

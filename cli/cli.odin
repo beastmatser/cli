@@ -1,5 +1,6 @@
 package cli
 
+import "core:slice"
 import "core:os"
 import "core:fmt"
 
@@ -84,7 +85,7 @@ validate_args_command :: proc(command: Command, args: []string) -> Error {
                 len(args),
             )
     }
-    return .Invalid_Amount_Args
+    return .Invalid_Args
 }
 
 validate_args_flags :: proc(app: App, manager: Manager) -> Error {
@@ -93,6 +94,19 @@ validate_args_flags :: proc(app: App, manager: Manager) -> Error {
         if is_flag(app, arg) {
             flag := find_flag(app, arg)
             values := manager->get_flag(app, arg)
+            for value in values {
+                if len(flag.choices) == 0 {
+                    break
+                }
+                if !slice.contains(flag.choices, value) {
+                    fmt.printf(
+                        red("Invalid value '%s' for flag '%s'.\n"),
+                        value,
+                        arg,
+                    )
+                    return .Invalid_Args
+                }
+            }
             switch true {
                 case len(values) == flag.args:
                     return .None
@@ -106,7 +120,7 @@ validate_args_flags :: proc(app: App, manager: Manager) -> Error {
                         flag.range[1],
                         len(values),
                     )
-                    break
+                    return .Invalid_Args
                 case flag.args == nil:
                     return .None
                 case:
@@ -115,13 +129,11 @@ validate_args_flags :: proc(app: App, manager: Manager) -> Error {
                         flag.args,
                         len(values),
                     )
-                    break
+                    return .Invalid_Args
                 }
-            } else {
-                return .None
             }
         }
-    return .Invalid_Amount_Args
+    return .None
 }
 
 check_required_flags :: proc(app: App, manager: Manager) -> Error {

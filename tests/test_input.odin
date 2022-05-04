@@ -31,13 +31,14 @@ test_input :: proc(t: ^testing.T) {
     expect(t, err1 == cli.Error.None, "Correct amount of arguments should not return an error!")
 
     err2 := cli.run(app, []string{"./test.exe", "test", "1", "2"})
-    expect(t, err2 == cli.Error.Invalid_Amount_Args, "Too many arguments should return an error!")
+    expect(t, err2 == cli.Error.Invalid_Args, "Too many arguments should return an error!")
 
     err3 := cli.run(app, []string{"./test.exe", "test"})
-    expect(t, err3 == cli.Error.Invalid_Amount_Args, "Too few arguments should return an error!")
+    expect(t, err3 == cli.Error.Invalid_Args, "Too few arguments should return an error!")
 
     cli.add(app, &cli.Command{ name = "test2", range = [2]int{1, 3} })
     err4 := cli.run(app, []string{"./test.exe", "test2", "1"})
+    fmt.println(err4)
     expect(t, err4 == cli.Error.None, "Correct amount of arguments should not return an error!")
 
     err5 := cli.run(app, []string{"./test.exe", "test2", "1", "2"})
@@ -47,5 +48,12 @@ test_input :: proc(t: ^testing.T) {
     expect(t, err6 == cli.Error.None, "Correct amount of arguments should not return an error!")
 
     err7 := cli.run(app, []string{"./test.exe", "test2", "1", "2", "3", "4"})
-    expect(t, err7 == cli.Error.Invalid_Amount_Args, "Too many arguments should return an error!")
+    expect(t, err7 == cli.Error.Invalid_Args, "Too many arguments should return an error!")
+
+    cli.add_flag(app, &cli.Flag{ long = "--test3", args = 1, choices = []string{"1", "2"}})
+    err8 := cli.run(app, []string{"./test.exe", "--test3", "1"})
+    expect(t, err8 == cli.Error.None, "Correct amount of arguments and choice should not return an error!")
+
+    err9 := cli.run(app, []string{"./test.exe", "--test3", "3"})
+    expect(t, err9 == cli.Error.Invalid_Args, "Incorrect choice should return an error!")
 }
