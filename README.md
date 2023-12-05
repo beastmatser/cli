@@ -12,8 +12,8 @@ import "core:fmt"
 import "core:strings"
 
 
-action :: proc(cli: cli.App, args: []string) {
-    fmt.println(strings.join(args[1:], " "))
+action :: proc(app: cli.App, manager: cli.Manager) {
+    fmt.println(strings.join(manager.args[2:], " "))
 }
 
 
@@ -22,7 +22,15 @@ main :: proc() {
         description = "This is my simple cli tool!",
     }
 
-    cli.add(&app, cli.Command{name = "echo", action = action})
-    err := cli.run(app)
+    cli.add(&app, &cli.Command{name = "echo", action = action})
+    err := cli.run(&app)
 }
+```
+
+To use your cli compile your code and move it into your path,
+it should look something like this:
+```
+odin run app.odin -file -out:app
+app echo Hello World!
+> Hello World!
 ```
