@@ -14,4 +14,4 @@ jobs:
           cd Odin
           ./build_odin.sh release
       - name: Run tests
-        run: ./tests.sh
+        run: ./odin run ../tests
