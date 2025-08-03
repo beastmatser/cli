@@ -12,6 +12,6 @@ jobs:
         run: |
           git clone https://github.com/odin-lang/Odin
           cd Odin
-          ./build_odin.sh release
+          make release-native
       - name: Run tests
         run: ./odin run ../tests
